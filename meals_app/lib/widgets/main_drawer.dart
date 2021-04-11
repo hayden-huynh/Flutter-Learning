@@ -42,7 +42,8 @@ class MainDrawer extends StatelessWidget {
               onTap: null,
             ),
             onTap: () {
-              Navigator.of(context).pushNamed('/');
+              Navigator.of(context).pushReplacementNamed(
+                  '/'); // Push new page on and replace the current page with it to avoid memory overflow at some point
             },
           ),
           Divider(),
@@ -62,7 +63,8 @@ class MainDrawer extends StatelessWidget {
               ),
             ),
             onTap: () {
-              Navigator.of(context).pushNamed(FiltersScreen.routeName);
+              Navigator.of(context)
+                  .pushReplacementNamed(FiltersScreen.routeName);
             },
           ),
           Divider(),
