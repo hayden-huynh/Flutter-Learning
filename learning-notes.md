@@ -65,3 +65,52 @@
 
 - Use `MediaQuery` to access device's sizes and assign **dynamic** sizes for top-most/larger widgets in the widget tree.
 - Use `LayoutBuilder` to size lower/smaller widgets in the widget tree relative to the sizes of those upper/larger widgets by accessing the constraints.
+
+## Provider package/pattern
+
+- Steps to properly use the Provider package:
+  1. Create a custom class to hold all data and related logics (most common use case) that will later provide this data to other widgets and implement the `ChangeNotifier` mixin. Make a call to `notifyListeners()` function whenever listening widgets need re-building after some changes.
+  2. Specify the top-most common ancestor widget of all interested widgets -> Wrap it with `ChangeNotifierProvider` -> Implement the `create` property with `(ctx) => <Instance of Provider class>`
+  3. In the class of the listening widget, extract the data from the provider by `Provider.of<Provider type>(context).<data>` (must specify `Provider type` to target the correct provider)
+
+- The data must be provided in the top-most common ancestor widget of all the widgets that are interested in listening to the changes in the provided data.
+
+- Instead of using the Provider package with custom class type (like done in section 8 of the course), Provider can also be used with built-in types.
+  - Example: 
+  ```dart
+    Provider<String>(builder: (ctx) => 'Hi, I am a text!', child: //...);
+  ```
+  - This use case is typically useful when you want to create a global ***constant*** variable that are accessible in many places without passing it through constructors.
+
+## mixin and the `with` keyword
+
+- Example of a `mixin`:
+  ```dart
+    mixin Agility {
+      var speed = 10;
+
+      void sitDown() {
+        print('Sititng down...');
+      }
+    }
+
+    class Person with Agility {
+      String name;
+      String age;
+
+      Person(this.name, this.age);
+    }
+
+    void main() {
+      final pers = Person('Max', 30);
+
+      print(pers.speed); // outputs 10
+      pers.sitDown(); // outputs 'Sitting down...'
+    }
+  ```
+
+- Using mixins will grant access to certain properties & methods of the mixined type. However, different from inheritance, the base type will not be considered same as the mixined type.
+
+- `with` keyword includes the properties and methods of a `mixin` into a class type.
+
+- A class type can only inherit from one single other class, whereas it can have multiple mixins.
