@@ -6,11 +6,16 @@ import 'package:shop_app/widgets/product_item.dart';
 
 // This is a data-using widget. Data will be extracted from the provider class
 class ProductsGrid extends StatelessWidget {
+  final bool showFavs;
+
+  ProductsGrid(this.showFavs);
+
   @override
   Widget build(BuildContext context) {
     final productsProvider = Provider.of<Products>(
-        context); // Extracting the data from the provider. Must specify which provider we are targeting at using <>
-    final products = productsProvider.items;
+        context, listen: false); // Extracting the data from the provider. Must specify which provider we are targeting at using <>
+    final products =
+        showFavs ? productsProvider.favoriteItems : productsProvider.items;
 
     return GridView.builder(
       gridDelegate:

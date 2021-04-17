@@ -82,6 +82,12 @@
   ```
   - This use case is typically useful when you want to create a global ***constant*** variable that are accessible in many places without passing it through constructors.
 
+- Alternative listening approach: wrap the listening widget with `Consumer` and implement the '`builder`' argument. 
+  - Advantage of `Consumer` is that we can wrap smaller widget to rebuild exactly what needs to be and not everything around.
+
+- Use `Multiprovider` and put all `ChangeNotifierProvider` into the '`providers`' list when a widget should have multiple providers.
+
+
 ## mixin and the `with` keyword
 
 - Example of a `mixin`:
