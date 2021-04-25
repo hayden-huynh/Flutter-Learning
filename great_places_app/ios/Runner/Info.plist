@@ -46,4 +46,8 @@
 <string>We need access to your Photo Library to select a photo for upload</string>
 <key>NSCameraUsageDescription</key>
 <string>We need access to your Camera to take a photo for upload</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>We need to access your location while the app is in use</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>We need to always access your location</string>
 </plist>

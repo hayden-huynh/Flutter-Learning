@@ -1,8 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.great_places_app">
-   <application
+    <application
         android:label="great_places_app"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBN0hw-cry6P-nNi91J67sB73GDc3ndLmo"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

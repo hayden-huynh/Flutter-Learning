@@ -120,3 +120,18 @@
 - `with` keyword includes the properties and methods of a `mixin` into a class type.
 
 - A class type can only inherit from one single other class, whereas it can have multiple mixins.
+
+## SQLite Database
+
+- Provided by the `sqflite` package from the pub.dev website
+- Source: https://pub.dev/packages/sqflite
+
+## Location package
+
+- Provides functionalities to access the real-time location of the device
+- Source: https://pub.dev/packages/location
+
+## Dynamic Google Map inside the app
+
+- The package `google_maps_flutter` is used in conjunction with the Google Maps Platform, which is part of the Google Cloud Services and provides APIs for location services.
+- Source: https://pub.dev/packages/google_maps_flutter/install
