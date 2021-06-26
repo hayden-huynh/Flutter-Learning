@@ -44,6 +44,30 @@ class CartItem extends StatelessWidget {
           vertical: 4,
         ),
       ), // What shown behing the dismissible widget when swiping starts
+
+      confirmDismiss: (direction) {
+        return showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text("Are you sure?"),
+            content: Text("Do you want to remove the item from the cart?"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    // The value passed to the pop function is wrapped into a Future and returned by showDialog
+                    Navigator.of(ctx).pop(false);
+                  },
+                  child: Text("No")),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop(true);
+                  },
+                  child: Text("Yes")),
+            ],
+          ),
+        );
+      },
+
       child: Card(
         margin: EdgeInsets.symmetric(
           horizontal: 15,
