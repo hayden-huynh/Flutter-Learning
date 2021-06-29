@@ -17,6 +17,8 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -28,7 +30,8 @@ class UserProductItem extends StatelessWidget {
           children: [
             IconButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(EditProductScreen.routeName, arguments: id);
+                Navigator.of(context)
+                    .pushNamed(EditProductScreen.routeName, arguments: id);
               },
               icon: Icon(
                 Icons.edit,
@@ -36,8 +39,18 @@ class UserProductItem extends StatelessWidget {
               ),
             ),
             IconButton(
-              onPressed: () {
-                Provider.of<Products>(context, listen: false).deleteProduct(id);
+              onPressed: () async {
+                try {
+                  await Provider.of<Products>(context, listen: false)
+                      .deleteProduct(id);
+                } catch (err) {
+                  // Have to use a scaffoldMessenger outside because cannot use .of(context) inside an asynchronous function
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(
+                      content: Text("Something went wrong. Deletion failed"),
+                    ),
+                  );
+                }
               },
               icon: Icon(
                 Icons.delete,
