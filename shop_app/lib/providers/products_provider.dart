@@ -10,6 +10,8 @@ class Products with ChangeNotifier {
   // 'with' keyword specifies a mixin
   // Using mixins will grant access to certain properties & methods of the mixined type. However, different from inheritance, the base type will not be considered same as the mixined type.
 
+  String _authToken;
+  String _userId;
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -68,15 +70,24 @@ class Products with ChangeNotifier {
     return _items.where((product) => product.isFavorite).toList();
   }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? '&orderBy="creatorId"&equalTo="$_userId"' : '';
+
     final url = Uri.parse(
-        "https://flutter-shop-app-6a506-default-rtdb.asia-southeast1.firebasedatabase.app/products.json");
+        'https://flutter-shop-app-6a506-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$_authToken$filterString');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
         return;
       }
+
+      final favUrl = Uri.parse(
+          "https://flutter-shop-app-6a506-default-rtdb.asia-southeast1.firebasedatabase.app/userFavorites/$_userId.json?auth=$_authToken");
+      final favoriteResponse = await http.get(favUrl);
+      final favoriteData = json.decode(favoriteResponse.body);
+
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(
@@ -85,7 +96,8 @@ class Products with ChangeNotifier {
             title: prodData["title"],
             description: prodData["description"],
             price: prodData["price"],
-            isFavorite: prodData["isFavorite"],
+            isFavorite:
+                favoriteData == null ? false : favoriteData[prodId] ?? false,
             imageUrl: prodData["imageUrl"],
           ),
         );
@@ -99,7 +111,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
-        "https://flutter-shop-app-6a506-default-rtdb.asia-southeast1.firebasedatabase.app/products.json");
+        "https://flutter-shop-app-6a506-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$_authToken");
 
     var response;
     try {
@@ -111,7 +123,7 @@ class Products with ChangeNotifier {
             "description": product.description,
             "imageUrl": product.imageUrl,
             "price": product.price,
-            "isFavorite": product.isFavorite
+            "creatorId": _userId
           },
         ),
       );
@@ -125,7 +137,7 @@ class Products with ChangeNotifier {
       description: product.description,
       imageUrl: product.imageUrl,
       price: product.price,
-      id: json.decode(response)["name"],
+      id: json.decode(response.body)["name"],
     );
     _items.add(newProduct);
     notifyListeners(); // Call this function to notify all listening widgets about changes
@@ -142,7 +154,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url = Uri.parse(
-          "https://flutter-shop-app-6a506-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json");
+          "https://flutter-shop-app-6a506-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$_authToken");
       // With the "patch" command, anything new will be added, anything already existing will be replaced, anything not mentioned in the body but existing up on the server will be kept the same
       await http.patch(
         url,
@@ -160,8 +172,8 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-        "https://flutter-shop-app-6a506-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json");
-    
+        "https://flutter-shop-app-6a506-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$_authToken");
+
     // Optimistic Delete: The Product object is first only removed from the list _items. It will actually be removed from memory when the delete operation on the server does not return any error
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
@@ -180,5 +192,10 @@ class Products with ChangeNotifier {
   // Should offload behind-the-scene logics to the provider
   Product findById(String id) {
     return _items.firstWhere((product) => product.id == id);
+  }
+
+  void update(String authToken, String userId) {
+    _authToken = authToken;
+    _userId = userId;
   }
 }
